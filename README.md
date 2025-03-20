@@ -17,4 +17,7 @@ python3 main.py and then add the bot the discord server
 
 ## Bot Configuration
 
+Set Welcome/Quran/Athkar/Roles Room
+Modifiy Roles
+
 ## TODO
