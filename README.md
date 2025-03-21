@@ -8,7 +8,7 @@ is a discord bot to be used for roles, welcome message, quran/athkar
 
 ## Setup
 
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --break-system-packages \
 copy .env.example to .env and modifiy the required data
 
 ## Run
@@ -17,7 +17,12 @@ python3 main.py and then add the bot the discord server
 
 ## Bot Configuration
 
-Set Welcome/Quran/Athkar/Roles Room
+Set Welcome/Quran/Athkar/Roles Room \
 Modifiy Roles
 
 ## TODO
+
+- [ ] Messages Logging
+- [ ] Roles Message
+- [ ] Filters ?
+- [ ] Quran / Athkar
