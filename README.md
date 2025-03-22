@@ -20,6 +20,14 @@ python3 main.py and then add the bot the discord server
 Set Welcome/Quran/Athkar/Roles Room \
 Modifiy Roles
 
+## Dev Notes
+
+### Mentions
+
+User mention: <@user_id>
+Role mention: <@&role_id>
+Room mention: <#room_id>
+
 ## TODO
 
 - [ ] Messages Logging
