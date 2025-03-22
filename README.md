@@ -24,8 +24,8 @@ Modifiy Roles
 
 ### Mentions
 
-User mention: <@user_id>
-Role mention: <@&role_id>
+User mention: <@user_id> \
+Role mention: <@&role_id> \
 Room mention: <#room_id>
 
 ## TODO
