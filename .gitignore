@@ -1,2 +1,12 @@
+# Config
 .env
+
+# Setup
 upload.sh
+
+# Logs
+config.json
+logs/
+
+# Cache
+__pycache__
