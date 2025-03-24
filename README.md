@@ -26,7 +26,7 @@ Modifiy Roles
 
 User mention: <@user_id> \
 Role mention: <@&role_id> \
-Room mention: <#room_id>
+Channel mention: <#channel>
 
 ## TODO
 
