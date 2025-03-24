@@ -3,25 +3,34 @@ import discord
 from dotenv import load_dotenv
 from lib.helper import Helper
 
+# TODO: Print Time with every message/command
+# TODO: Slash For AutoComplete
+
 class discordClient(discord.Client):
     command_prefix = "$"
 
     async def on_ready(self):
         # for member in self.get_all_members():
-        #     print(member, member.guild, member.mutual_guilds, member.guild_permissions.administrator)
-        print(f'Logged on as {self.user}!')
+            # print(member, member.guild, member.mutual_guilds, member.guild_permissions.administrator)
+        Helper.print(f'Logged on as {self.user}!')
 
     async def on_resume(self):
+        # TODO: Print Time
         print("Resumed")
 
     async def on_disconnect(self):
+        # TODO: Print Time
         print("Disconnected")
 
     async def close(self):
         Helper.save_config(config)
 
     async def on_member_join(self, member: discord.Member):
-        pass
+        with open(f"./logs/users/profile_{member.id}.png", "wb") as f:
+            f.write((await member.avatar.to_file()).fp.read())
+
+        # TODO: Edit Image combined with profile
+        # TODO: Send the Welcome Message
 
     async def on_raw_member_remove(self, payload):
         pass
@@ -30,6 +39,9 @@ class discordClient(discord.Client):
         pass
 
     async def on_message(self, message: discord.Message):
+        if self.user == message.author:
+            return # TODO: Might Need To be removed for loggin
+
         if type(message.channel) == discord.DMChannel:
             print(f"id: {message.channel.id}\nFrom: {message.author} in DMs\nContent: {message.content}")
         elif type(message.channel) == discord.TextChannel:
@@ -43,7 +55,7 @@ class discordClient(discord.Client):
                 message_splits = message.content.split(" ")
                 message_splits_len = len(message_splits)
                 if message_splits[0] == f"{self.command_prefix}help":
-                    await message.channel.send(f"!help to show commands \n!set-role to set messages role")
+                    await message.channel.send(f"# Help\n{self.command_prefix}help to show commands \n{self.command_prefix}set-role to set messages role\n{self.command_prefix}set-welcome <channel> | Set Welcome Channel")
                 elif message_splits[0] == f"{self.command_prefix}set-role":
                     if not message.author.guild_permissions.administrator:
                         await message.channel.send(f"{message.author.mention} does not have permission")
@@ -84,6 +96,12 @@ class discordClient(discord.Client):
         # print(roles)
         # print(discord.utils.get(roles, name="t"))
         # payload.member.remove_roles()
+
+    async def quran(self):
+        # embed = discord.Embed(title="Help", description=f"{self.command_prefix}help to show commands \n{self.command_prefix}set-role to set messages role")
+        # embed.colour = discord.colour.Color.blue()
+        # await message.channel.send(embed=embed)
+        pass
 
 if __name__ == "__main__":
     config = Helper.load_config()
