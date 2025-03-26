@@ -1,26 +1,34 @@
 import os
 import discord
-from dotenv import load_dotenv
+import discord.ext
+import discord.ext.commands
 from lib.helper import Helper
+from dotenv import load_dotenv
+from discord.ext import commands
+from discord import app_commands
 
 # TODO: Print Time with every message/command
-# TODO: Slash For AutoComplete
+# TODO: For Quran & Welcome
+# https://github.com/xixi52/discord-canvas (https://support.glitch.com/t/custom-fonts-in-discord-bot/4840) 
+# https://www.geeksforgeeks.org/adding-text-on-image-using-python-pil/
+# https://stackoverflow.com/questions/65868573/how-to-send-custom-emojis-with-bot-discord-py-rewrite
 
-class discordClient(discord.Client):
-    command_prefix = "$"
+class discordClient(commands.Bot):
+
+    def __init__(self, command_prefix, *, help_command = ..., tree_cls = app_commands.CommandTree, description = None, allowed_contexts = ..., allowed_installs = ..., intents, **options):
+        # super().__init__(command_prefix, help_command=help_command, tree_cls=tree_cls, description=description, allowed_contexts=allowed_contexts, allowed_installs=allowed_installs, intents=intents, **options)
+        super().__init__(intents=intents, command_prefix=command_prefix)
 
     async def on_ready(self):
-        # for member in self.get_all_members():
-            # print(member, member.guild, member.mutual_guilds, member.guild_permissions.administrator)
         Helper.print(f'Logged on as {self.user}!')
+        await self.tree.sync()
+        Helper.print("Tree sync done (On Ready)")
 
     async def on_resume(self):
-        # TODO: Print Time
-        print("Resumed")
+        Helper.print("Resumed")
 
     async def on_disconnect(self):
-        # TODO: Print Time
-        print("Disconnected")
+        Helper.print("Disconnected")
 
     async def close(self):
         Helper.save_config(config)
@@ -38,6 +46,10 @@ class discordClient(discord.Client):
     async def on_member_update(self, before, after):
         pass
 
+    async def on_interaction(self, interaction: discord.Interaction):
+        # print(interaction)
+        pass
+
     async def on_message(self, message: discord.Message):
         if self.user == message.author:
             return # TODO: Might Need To be removed for loggin
@@ -52,24 +64,25 @@ class discordClient(discord.Client):
             print(f"id: {message.channel.id}\nFrom: {message.author} in {fromPath}\nContent: {message.content}")
 
             if message.content[0:len(self.command_prefix)] == self.command_prefix:
-                message_splits = message.content.split(" ")
-                message_splits_len = len(message_splits)
-                if message_splits[0] == f"{self.command_prefix}help":
-                    await message.channel.send(f"# Help\n{self.command_prefix}help to show commands \n{self.command_prefix}set-role to set messages role\n{self.command_prefix}set-welcome <channel> | Set Welcome Channel")
-                elif message_splits[0] == f"{self.command_prefix}set-role":
-                    if not message.author.guild_permissions.administrator:
-                        await message.channel.send(f"{message.author.mention} does not have permission")
-                        return
-                    await message.channel.send(f"Hello {message.author}")
-                    print(message.author.roles)
-                    print("Such Roles")
-                elif message_splits[0] == f"{self.command_prefix}set-welcome":
-                    if not message.author.guild_permissions.administrator:
-                        await message.channel.send(f"{message.author.mention} does not have permission")
-                        return
-                    print(message_splits[1])
-                else:
-                    print("Read")
+                await client.process_commands(message)
+                # message_splits = message.content.split(" ")
+                # message_splits_len = len(message_splits)
+                # if message_splits[0] == f"{self.command_prefix}help":
+                #     await message.channel.send(f"# Help\n{self.command_prefix}help to show commands \n{self.command_prefix}set-role to set messages role\n{self.command_prefix}set-welcome <channel> | Set Welcome Channel")
+                # elif message_splits[0] == f"{self.command_prefix}set-role":
+                #     if not message.author.guild_permissions.administrator:
+                #         await message.channel.send(f"{message.author.mention} does not have permission")
+                #         return
+                #     await message.channel.send(f"Hello {message.author}")
+                #     print(message.author.roles)
+                #     print("Such Roles")
+                # elif message_splits[0] == f"{self.command_prefix}set-welcome":
+                #     if not message.author.guild_permissions.administrator:
+                #         await message.channel.send(f"{message.author.mention} does not have permission")
+                #         return
+                #     print(message_splits[1])
+                # else:
+                #     print("Read")
 
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         if not Helper.is_guild(payload.guild_id):
@@ -103,13 +116,34 @@ class discordClient(discord.Client):
         # await message.channel.send(embed=embed)
         pass
 
+intents = discord.Intents.all()
+client = discordClient(intents=intents, command_prefix="/")
+
+@client.tree.command(name="help", description="help the bot")
+async def help(interaction: discord.Interaction):
+    # print(interaction)
+    commands = []
+    for command in client.tree._get_all_commands():
+        commands.append(f"{command.name}: {command.description}")
+    await interaction.response.send_message("\n".join(commands))
+
+@client.tree.command(name="ping", description="ping the bot")
+async def ping(interaction: discord.Interaction):
+    print(interaction)
+    await interaction.response.send_message(f"Pong! Latency is {client.latency}")
+
+@client.tree.command(name="quran", description="quran the bot")
+async def quran(interaction: discord.Interaction):
+    print(interaction)
+    await interaction.response.send_message(f"Pong! Latency is {client.latency}")
+
+@client.tree.command(name="athkar", description="athkar the bot")
+async def athkar(interaction: discord.Interaction):
+    print(interaction)
+    await interaction.response.send_message(f"Pong! Latency is {client.latency}")
+
 if __name__ == "__main__":
     config = Helper.load_config()
     load_dotenv()
     BOT_TOKEN = os.getenv("BOT_TOKEN")
-    intents = discord.Intents.default()
-    intents.message_content = True
-    intents.members = True
-    intents.presences = True
-    client = discordClient(intents=intents)
     client.run(BOT_TOKEN)
