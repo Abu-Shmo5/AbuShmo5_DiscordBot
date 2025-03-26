@@ -4,6 +4,8 @@ import time
 import discord
 from lib import cli_colouring
 
+# TODO: Sqlite3 Commands
+
 class Helper():
     def get_time() -> str:
         return time.strftime(f"[%Y-%m-%d %H:%M:%S]", time.localtime(time.time()))
